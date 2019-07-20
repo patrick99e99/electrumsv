@@ -45,7 +45,6 @@ from .logs import logs
 from .paymentrequest import PR_PAID, PR_UNPAID, PR_UNKNOWN, PR_EXPIRED
 from .transaction import Transaction, multisig_script
 from .util import bfh, bh2u, format_satoshis, json_decode, to_bytes
-from .transaction_notifier import TransactionNotifier
 
 
 logger = logs.get_logger("commands")
@@ -519,13 +518,10 @@ class Commands:
         transaction ID"""
         self.wallet.set_label(key, label)
 
-    @command('w')
+    @command('wn')
     def listsubscriptions(self):
         """List subscribed addresses. Returns the list of all addresses being watched in your wallet."""
-        out = []
-        for addr in self.wallet.get_addresses():
-          self.network.get_subscriptions();
-        return out
+        return self.network.get_subscriptions_for_wallet(self.wallet);
 
     @command('w')
     def listaddresses(self, receiving=False, change=False, labels=False, frozen=False,
@@ -619,7 +615,6 @@ class Commands:
     @command('w')
     def createnewaddress(self):
         """Create a new receiving address, beyond the gap limit of the wallet"""
-        TransactionNotifier.notify('bob', 'tuna')
         return self.wallet.create_new_address(False).to_string()
 
     @command('w')
