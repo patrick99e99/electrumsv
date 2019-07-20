@@ -53,7 +53,7 @@ from .transaction import Transaction
 from .util import JSON, normalize_version
 from .networks import Net
 from .version import PACKAGE_VERSION, PROTOCOL_VERSION, PROTOCOL_VERSION_MINIMUM
-
+from .transaction_notifier import TransactionNotifier
 
 logger = logs.get_logger("network")
 
@@ -637,6 +637,8 @@ class SVSession(RPCSession):
 
         for wallet in wallets:
             await wallet.set_address_history(address, history, tx_fees)
+
+        TransactionNotifier.notify(address, history)
 
     async def _main_server_batch(self):
         '''Raises: DisconnectSessionError, BatchError, TaskTimeout'''
