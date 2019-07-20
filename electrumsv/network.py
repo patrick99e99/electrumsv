@@ -848,8 +848,11 @@ class SVSession(RPCSession):
                 del self._address_map[script_hash]
                 await group.spawn(self._unsubscribe_from_script_hash(script_hash))
 
-    def get_subs_by_wallet(self, wallet):
-        return self._subs_by_wallet[wallet].items()
+    def get_address_subscriptions_by_wallet(self, wallet):
+        out = []
+        for sh in self._subs_by_wallet[wallet]:
+            out.append(self._address_map[sh])
+        return out
 
     @classmethod
     def _get_exclusive_set(cls, wallet, subs: List[str]) -> set:
@@ -1352,7 +1355,7 @@ class Network:
         }
 
     def get_subscriptions_for_wallet(self, wallet):
-        return self.main_session().get_subs_by_wallet(wallet);
+        return self.main_session().get_address_subscriptions_by_wallet(wallet)
 
     # FIXME: this should be removed; its callers need to be fixed
     def request_and_wait(self, method, args):
